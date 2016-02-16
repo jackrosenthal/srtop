@@ -9,6 +9,6 @@ LoadAverageInfo get_load_average() {
         exit(1);
     }
     LoadAverageInfo la;
-    fscanf(fp, "%lf %lf %lf", &la.one_min, &la.five_mins, &la.fifteen_mins);
+    fscanf(fp, "%lf %lf %lf", &(la.one_min), &(la.five_mins), &(la.fifteen_mins));
     return la;
 }
