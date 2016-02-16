@@ -7,12 +7,12 @@ using namespace std;
 
 
 vector<CpuInfo> get_cpu_info() {
-  // TODO: implement me
-  return vector<CpuInfo>();
+    // TODO: implement me
+    return vector<CpuInfo>();
 }
 
 
 CpuInfo operator -(const CpuInfo& lhs, const CpuInfo& rhs) {
-  // TODO: implement me
-  return CpuInfo();
+    // TODO: implement me
+    return CpuInfo();
 }
