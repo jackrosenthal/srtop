@@ -1,8 +1,6 @@
 #include "load_average_info.h"
 #include <stdio.h>
-
-using namespace std;
-
+#include <stdlib.h>
 
 LoadAverageInfo get_load_average() {
     FILE *fp = fopen(PROC_ROOT "/loadavg", "r");
