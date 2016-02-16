@@ -27,7 +27,7 @@ else
 endif
 
 # Flags passed to the preprocessor.
-CPPFLAGS += -Wall -DPROC_ROOT='"$(PROC_ROOT)"' -MMD -MP -Isrc
+CPPFLAGS += -Wall -DPROC_ROOT='"$(PROC_ROOT)"' -MMD -MP -Isrc -std=c++14
 TEST_CPPFLAGS = $(CPPFLAGS) -isystem $(GTEST_DIR)/include
 
 # ALL .cpp files.
