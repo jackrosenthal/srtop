@@ -5,7 +5,7 @@
 LoadAverageInfo get_load_average() {
     FILE *fp = fopen(PROC_ROOT "/loadavg", "r");
     if (!fp) {
-        fprintf(stderr, "file error\n");
+        perror(PROC_ROOT "/loadavg file error");
         exit(1);
     }
     LoadAverageInfo la;

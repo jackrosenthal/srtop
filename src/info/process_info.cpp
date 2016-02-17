@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <ctype.h>
 #include <vector>
 
 using namespace std;
@@ -12,8 +13,7 @@ ProcessInfo get_process(int pid, const char* basedir) {
     sprintf(stat_fn, "%s/%d/stat", basedir, pid);
     FILE *stat_fp = fopen(stat_fn, "r");
     if (!stat_fp) {
-        fprintf(stderr, "file error: %s\n", stat_fn);
-        exit(1);
+        return ProcessInfo();
     }
     ProcessInfo info;
     fscanf(stat_fp, "%d %s %c %d %d %d %d %d %u "\
@@ -65,12 +65,13 @@ ProcessInfo get_process(int pid, const char* basedir) {
             &(info.guest_time),
             &(info.cguest_time)
         );
+    fclose(stat_fp);
+
     char *statm_fn = (char *) alloca(strlen(basedir) + 19);
     sprintf(statm_fn, "%s/%d/statm", basedir, pid);
     FILE *statm_fp = fopen(statm_fn, "r");
     if (!statm_fp) {
-        fprintf(stderr, "file error: %s\n", statm_fn);
-        exit(1);
+        return ProcessInfo();
     }
     fscanf(statm_fp, "%ld %ld %ld %ld %ld %ld %ld",
             &(info.size),
@@ -81,12 +82,13 @@ ProcessInfo get_process(int pid, const char* basedir) {
             &(info.drs),
             &(info.dt)
       );
+    fclose(statm_fp);
+
     char *cmdline_fn = (char *) alloca(strlen(basedir) + 21);
     sprintf(cmdline_fn, "%s/%d/cmdline", basedir, pid);
     FILE *cmdline_fp = fopen(cmdline_fn, "r");
     if (!cmdline_fp) {
-        fprintf(stderr, "file error: %s\n", cmdline_fn);
-        exit(1);
+        return ProcessInfo();
     }
     char c;
     while ((c = fgetc(cmdline_fp)) != EOF) {
@@ -96,12 +98,30 @@ ProcessInfo get_process(int pid, const char* basedir) {
     if (!info.command_line.length())
         info.command_line = std::string(info.comm + 1);
     info.command_line.pop_back();
+    fclose(cmdline_fp);
+
+    char *taskdir = (char *) alloca(strlen(basedir) + 18);
+    sprintf(taskdir, "%s/%d/task", basedir, pid);
+    info.threads = get_all_processes(taskdir);
 
     return info;
 }
 
 
 vector<ProcessInfo> get_all_processes(const char* basedir) {
-    // TODO: implement me
-    return vector<ProcessInfo>();
+    DIR *dp;
+    struct dirent *dirp;
+    if ((dp = opendir(basedir)) == NULL) return vector<ProcessInfo>();
+    vector<ProcessInfo> infolist;
+    while ((dirp = readdir(dp)) != NULL) {
+        for (char *p = dirp->d_name; *p; p++)
+            if (!isdigit(*p)) goto while_cont;
+        int pid;
+        sscanf(dirp->d_name, "%d", &pid);
+        infolist.push_back(get_process(pid, basedir));
+while_cont:
+        ;
+    }
+    closedir(dp);
+    return infolist;
 }
