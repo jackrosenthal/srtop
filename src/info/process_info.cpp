@@ -103,7 +103,7 @@ ProcessInfo get_process(int pid, const char* basedir) {
     char *taskdir = (char *) alloca(strlen(basedir) + 18);
     sprintf(taskdir, "%s/%d/task", basedir, pid);
     info.threads = get_all_processes(taskdir);
-    for (int i = 0; i < info.threads.size(); i++)
+    for (size_t i = 0; i < info.threads.size(); i++)
         info.threads[i].tgid = pid;
 
     return info;
