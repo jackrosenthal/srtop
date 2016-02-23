@@ -7,6 +7,8 @@
 #include <getopt.h>
 #include <ncurses.h>
 #include <string.h>
+#include "info/system_info.h"
+#include "utils/fmt.h"
 
 /**
  * Gets a character from the user, waiting for however many milliseconds that
@@ -96,28 +98,59 @@ void opts_init(int argc, char **argv) {
     }
 }
 
+/**
+ * A simple ncurses "macro" to fill the rest of a line with spaces.
+ */
+void fill_ln() {
+    if (has_colors() == FALSE) {
+        printw("\n");
+        return;
+    }
+    int row, col, x, y;
+    (void)row, (void)y;
+    getmaxyx(stdscr, row, col);
+    getyx(stdscr, y, x);
+    for (int i = x; i < col; i++) printw(" ");
+}
+
 int main(int argc, char **argv) {
     opts_init(argc, argv);
+    int row, col;
     initscr();
+    if (has_colors() == TRUE) {
+        start_color();
+        assume_default_colors(COLOR_WHITE, COLOR_BLACK);
+        init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    }
     curs_set(FALSE);
     timeout(100*opts.delay_tenths);
-
-    int tick = 1;
-
-    while (true) {
+    SystemInfo sys_last = get_system_info();
+    for (SystemInfo sys = sys_last;; sys_last = sys, sys = get_system_info()) {
         wclear(stdscr);
-
-        // Display the counter using printw (an ncurses function)
-        printw("Behold, the number:\n%d", tick++);
-
-        // Redraw the screen.
+        getmaxyx(stdscr, row, col);
+        printw("%s,  %s\n", fmt_uptime_info(sys.uptime), fmt_loadavg_info(sys.load_average));
+        for (size_t cpu_id = 0; cpu_id < sys.cpus.size(); cpu_id++)
+            printw("%s\n", fmt_cpuinfo_info(sys, sys_last, cpu_id));
+        printw("%s\n", fmt_proc_info(sys));
+        printw("%s\n", fmt_thread_info(sys));
+        printw("%s\n", fmt_mem_info(sys));
+        attron(COLOR_PAIR(1));
+        printw("%s", fmt_tbl_header());
+        fill_ln();
+        attroff(COLOR_PAIR(1));
+        for (ProcessInfo proc: sys.processes)
+            printw("%s\n", fmt_tbl_item(proc));
+        const char keys[4][5] = {"PID", "CPU", "MEM", "TIME"};
+        move(row-1, 0);
+        clrtoeol();
+        attron(COLOR_PAIR(1));
+        mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s",
+                opts.delay_tenths, keys[(size_t)opts.sort_key]);
+        fill_ln();
+        attroff(COLOR_PAIR(1));
         refresh();
-
-        // End the loop and exit if Q is pressed
         exit_if_user_presses_q();
     }
-
-    // ncurses teardown
     endwin();
 
     return EXIT_SUCCESS;
