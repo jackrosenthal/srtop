@@ -38,13 +38,15 @@ char * fmt_cpuinfo_info(SystemInfo sys, SystemInfo sys_last, size_t cpu_no) {
 
 char * fmt_proc_info(SystemInfo sys) {
     static char proc_buffer[80];
-    sprintf(proc_buffer, "TODO: proc");
+    sprintf(proc_buffer, "%d total processes, %d running",
+            sys.num_processes, sys.num_running);
     return proc_buffer;
 }
 
 char * fmt_thread_info(SystemInfo sys) {
     static char thread_buffer[80];
-    sprintf(thread_buffer, "TODO: thread");
+    sprintf(thread_buffer, "%d total threads, %d user, %d kernel",
+            sys.num_threads, sys.num_user_threads, sys.num_kernel_threads);
     return thread_buffer;
 }
 
