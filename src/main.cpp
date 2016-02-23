@@ -4,9 +4,12 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <getopt.h>
 #include <ncurses.h>
 #include <string.h>
+#include <unordered_map>
+#include <algorithm>
 #include "info/system_info.h"
 #include "utils/fmt.h"
 
@@ -120,6 +123,13 @@ void fill_ln() {
     printw("%*s", col - x, "");
 }
 
+int operator <(ProcessInfo& a, ProcessInfo& b) {
+    if (opts.sort_key == PID) return a.pid < b.pid;
+    if (opts.sort_key == CPU) return a.cpu_percent > b.cpu_percent;
+    if (opts.sort_key == MEM) return a.rss > b.rss;
+    return a.utime + a.stime > b.utime + b.stime;
+}
+
 int main(int argc, char **argv) {
     opts_init(argc, argv);
     int row, col, x, y;
@@ -134,6 +144,23 @@ int main(int argc, char **argv) {
     timeout(100*opts.delay_tenths);
     SystemInfo sys_last = get_system_info();
     for (SystemInfo sys = sys_last;; sys_last = sys, sys = get_system_info()) {
+
+        /* Calculate cpu_percent for each process */
+        std::unordered_map<int, ProcessInfo *> lproc;
+        for (ProcessInfo& proc: sys_last.processes)
+            lproc[proc.pid] = &proc;
+        for (ProcessInfo& proc: sys.processes) {
+            if (lproc.count(proc.pid)) {
+                proc.cpu_percent = (double)((proc.utime + proc.stime) -
+                    (lproc[proc.pid]->utime + lproc[proc.pid]->stime))
+                    / sysconf(_SC_CLK_TCK) * 100;
+            }
+            else proc.cpu_percent = 0;
+        }
+
+        /* Sort processes by sort key */
+        std::sort(sys.processes.begin(), sys.processes.end());
+
         wclear(stdscr);
         getmaxyx(stdscr, row, col);
         printw("%s,  %s\n", fmt_uptime_info(sys.uptime), fmt_loadavg_info(sys.load_average));
