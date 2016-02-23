@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
             printw("%s\n", fmt_cpuinfo_info(sys, sys_last, cpu_id));
         printw("%s\n", fmt_proc_info(sys));
         printw("%s\n", fmt_thread_info(sys));
-        printw("%s\n", fmt_mem_info(sys));
+        printw("%s\n", fmt_mem_info());
         attron(COLOR_PAIR(1));
         printw("%s", fmt_tbl_header());
         fill_ln();

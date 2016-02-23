@@ -10,6 +10,7 @@
 #include "../info/system_info.h"
 #include "../info/load_average_info.h"
 #include "../info/process_info.h"
+#include "../info/memory_info.h"
 
 char * fmt_uptime_info(double uptime) {
     static char uptime_buffer[80];
@@ -47,9 +48,14 @@ char * fmt_thread_info(SystemInfo sys) {
     return thread_buffer;
 }
 
-char * fmt_mem_info(SystemInfo sys) {
+char * fmt_mem_info() {
     static char mem_buffer[80];
-    sprintf(mem_buffer, "TODO: mem");
+    MemoryInfo mem = get_memory_info();
+    sprintf(mem_buffer, "MEM:  total %s, used %s, avail %s",
+            fmt_bytes(mem.total_memory<<10),
+            fmt_bytes((mem.total_memory - mem.free_memory)<<10),
+            fmt_bytes(mem.free_memory<<10)
+        );
     return mem_buffer;
 }
 
@@ -63,16 +69,18 @@ char * fmt_tbl_header() {
 
 char * fmt_tbl_item(ProcessInfo proc) {
     static char tbl_item_buffer[80];
-    sprintf(tbl_item_buffer, "%-5d %-7s %c %-4s %-8s %s",
+    sprintf(tbl_item_buffer, "%-5d %-7s %c %3.0f%% %-8s %s",
             proc.pid, fmt_bytes(proc.rss*sysconf(_SC_PAGESIZE)), proc.state,
-            "CPU%", fmt_time((proc.utime+proc.stime)/sysconf(_SC_CLK_TCK)), proc.command_line.c_str());
+            proc.cpu_percent, fmt_time((proc.utime+proc.stime)/sysconf(_SC_CLK_TCK)), proc.command_line.c_str());
     return tbl_item_buffer;
 }
 
-char * fmt_bytes(size_t amount) {
-    static char buf[24];
+char * fmt_bytes(unsigned long long amount) {
+    static size_t state;
+    static char buffers[16][24];
+    char *buf = buffers[state++%16];
     if (!(amount >> 10)) {
-        sprintf(buf, "%luB", amount);
+        sprintf(buf, "%lluB", amount);
         return buf;
     }
     if (!(amount >> 20)) {
