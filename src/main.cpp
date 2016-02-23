@@ -31,6 +31,7 @@ enum sortby {PID, CPU, MEM, TIME};
 static struct progopts {
     int delay_tenths;
     enum sortby sort_key;
+    int max_proc;
 } opts;
 
 /**
@@ -44,6 +45,7 @@ void opts_help(char **argv, int exit_status) {
            "======          =======     ===========\n"
            "-d --delay      10          tenths of seconds to delay between updates\n"
            "-s --sort-key   CPU         sort by PID, CPU, MEM or TIME\n"
+           "-m --max-proc   0           maximum processes to print in table (0 for no max)\n"
            "-h --help                   this message\n",
            argv[0]
       );
@@ -57,15 +59,20 @@ void opts_init(int argc, char **argv) {
     const static struct option longopts[] = {
         {"delay", required_argument, NULL, 'd'},
         {"sort-key", required_argument, NULL, 's'},
+        {"max-proc", required_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
     opts.delay_tenths = 10;
     opts.sort_key = CPU;
+    opts.max_proc = 0;
     int i, optchar;
-    while ((optchar = getopt_long(argc, argv, "d:s:h", longopts, &i)) != -1) {
+    while ((optchar = getopt_long(argc, argv, "d:s:m:h", longopts, &i)) != -1) {
         switch (optchar) {
             case 0:
+                break;
+            case 'm':
+                sscanf(optarg, "%d", &opts.max_proc);
                 break;
             case 'd':
                 sscanf(optarg, "%d", &opts.delay_tenths);
@@ -110,17 +117,18 @@ void fill_ln() {
     (void)row, (void)y;
     getmaxyx(stdscr, row, col);
     getyx(stdscr, y, x);
-    for (int i = x; i < col; i++) printw(" ");
+    printw("%*s", col - x, "");
 }
 
 int main(int argc, char **argv) {
     opts_init(argc, argv);
-    int row, col;
+    int row, col, x, y;
     initscr();
     if (has_colors() == TRUE) {
         start_color();
         assume_default_colors(COLOR_WHITE, COLOR_BLACK);
-        init_pair(1, COLOR_BLACK, COLOR_WHITE);
+        init_pair(1, COLOR_BLACK, COLOR_WHITE);         /* inverted */
+        init_pair(2, COLOR_WHITE, COLOR_RED);           /* alert */
     }
     curs_set(FALSE);
     timeout(100*opts.delay_tenths);
@@ -138,14 +146,20 @@ int main(int argc, char **argv) {
         printw("%s", fmt_tbl_header());
         fill_ln();
         attroff(COLOR_PAIR(1));
-        for (ProcessInfo proc: sys.processes)
-            printw("%s\n", fmt_tbl_item(proc));
+        getyx(stdscr, y, x);
+        int starty = y;
+        for (ProcessInfo proc: sys.processes) {
+            if (opts.max_proc && y - starty >= opts.max_proc) break;
+            if (proc.state == 'R') attron(COLOR_PAIR(2));
+            printw("%-*.*s", col, col, fmt_tbl_item(proc));
+            attroff(COLOR_PAIR(2));
+            if (++y >= row - 1) break;
+        }
         const char keys[4][5] = {"PID", "CPU", "MEM", "TIME"};
         move(row-1, 0);
-        clrtoeol();
         attron(COLOR_PAIR(1));
-        mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s",
-                opts.delay_tenths, keys[(size_t)opts.sort_key]);
+        mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s, max-proc: %d",
+                opts.delay_tenths, keys[(size_t)opts.sort_key], opts.max_proc);
         fill_ln();
         attroff(COLOR_PAIR(1));
         refresh();

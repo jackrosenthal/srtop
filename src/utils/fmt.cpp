@@ -23,27 +23,27 @@ char * fmt_uptime_info(double uptime) {
     return uptime_buffer;
 }
 
-char * fmt_loadavg_info(LoadAverageInfo la) {
+char * fmt_loadavg_info(LoadAverageInfo& la) {
     static char la_buffer[36];
     sprintf(la_buffer, "load average: %.2f %.2f %.2f",
             la.one_min, la.five_mins, la.fifteen_mins);
     return la_buffer;
 }
 
-char * fmt_cpuinfo_info(SystemInfo sys, SystemInfo sys_last, size_t cpu_no) {
+char * fmt_cpuinfo_info(SystemInfo& sys, SystemInfo& sys_last, size_t cpu_no) {
     static char cpuinfo_buffer[80];
     sprintf(cpuinfo_buffer, "TODO: cpuinfo_info");
     return cpuinfo_buffer;
 }
 
-char * fmt_proc_info(SystemInfo sys) {
+char * fmt_proc_info(SystemInfo& sys) {
     static char proc_buffer[80];
     sprintf(proc_buffer, "%d total processes, %d running",
             sys.num_processes, sys.num_running);
     return proc_buffer;
 }
 
-char * fmt_thread_info(SystemInfo sys) {
+char * fmt_thread_info(SystemInfo& sys) {
     static char thread_buffer[80];
     sprintf(thread_buffer, "%d total threads, %d user, %d kernel",
             sys.num_threads, sys.num_user_threads, sys.num_kernel_threads);
@@ -69,7 +69,7 @@ char * fmt_tbl_header() {
     return tbl_header_buffer;
 }
 
-char * fmt_tbl_item(ProcessInfo proc) {
+char * fmt_tbl_item(ProcessInfo& proc) {
     static char tbl_item_buffer[80];
     sprintf(tbl_item_buffer, "%-5d %-7s %c %3.0f%% %-8s %s",
             proc.pid, fmt_bytes(proc.rss*sysconf(_SC_PAGESIZE)), proc.state,
