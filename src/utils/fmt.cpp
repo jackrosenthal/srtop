@@ -70,8 +70,8 @@ char * fmt_tbl_header() {
 }
 
 char * fmt_tbl_item(ProcessInfo& proc) {
-    static char tbl_item_buffer[80];
-    sprintf(tbl_item_buffer, "%-5d %-7s %c %-5.1f %-8s %s",
+    static char tbl_item_buffer[256];
+    sprintf(tbl_item_buffer, "%-5d %-7s %c %-5.1f %-8s %.220s",
             proc.pid, fmt_bytes(proc.rss*sysconf(_SC_PAGESIZE)), proc.state,
             proc.cpu_percent, fmt_time((proc.utime+proc.stime)/sysconf(_SC_CLK_TCK)), proc.command_line.c_str());
     return tbl_item_buffer;
