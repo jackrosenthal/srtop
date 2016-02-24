@@ -7,7 +7,7 @@
 MemoryInfo get_memory_info() {
     FILE *fp = fopen(PROC_ROOT "/meminfo", "r");
     if (!fp) {
-        fprintf(stderr, "file error meminfo\n");
+        perror("get_memory_info");
         exit(1);
     }
     std::unordered_map<std::string, unsigned long long> mi_map;
@@ -17,6 +17,7 @@ MemoryInfo get_memory_info() {
         fscanf(fp, "%16[^:]: %llu%*[^\n]\n", item, &item_val);
         mi_map[std::string(item)] = item_val;
     }
+    fclose(fp);
     return (MemoryInfo){
         .total_memory = mi_map["MemTotal"],
         .free_memory = mi_map["MemFree"],

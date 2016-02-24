@@ -8,7 +8,7 @@ using namespace std;
 vector<CpuInfo> get_cpu_info() {
     FILE *fp = fopen(PROC_ROOT "/stat", "r");
     if (!fp) {
-        fprintf(stderr, "file error stat\n");
+        perror("get_cpu_info");
         exit(1);
     }
     vector<CpuInfo> info;
@@ -24,6 +24,7 @@ vector<CpuInfo> get_cpu_info() {
             p++;
         }
     }
+    fclose(fp);
     return info;
 }
 
