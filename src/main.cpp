@@ -143,7 +143,8 @@ int main(int argc, char **argv) {
     curs_set(FALSE);
     timeout(100*opts.delay_tenths);
     SystemInfo sys_last = get_system_info();
-    for (SystemInfo sys = sys_last;; sys_last = sys, sys = get_system_info()) {
+    sys_last.processes.empty();
+    for (SystemInfo sys = get_system_info();; sys_last = sys, sys = get_system_info()) {
 
         /* Calculate cpu_percent for each process */
         std::unordered_map<int, ProcessInfo *> lproc;
