@@ -135,7 +135,7 @@ bin/gtest_main.a: bin/gtest-all.o bin/gtest_main.o
 
 # Build the unit tests.
 bin/all_tests: $(INFO_TEST_OBJS) $(OTHER_OBJS) $(TEST_OBJS) bin/gtest_main.a
-	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
+	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -lncurses -pthread $^ -o $@
 
 # Set up a fake /proc filesystem for testing.
 proc:
