@@ -64,3 +64,8 @@ struct SystemInfo {
  * about the system at a given point in time.
  */
 SystemInfo get_system_info();
+
+/**
+ * Calculate cpu_percent for each process
+ */
+void calc_process_cpu(SystemInfo& sys, SystemInfo& sys_last);

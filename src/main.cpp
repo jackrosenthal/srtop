@@ -55,19 +55,7 @@ int main(int argc, char **argv) {
     SystemInfo sys_last = get_system_info();
     sys_last.processes.empty();
     for (SystemInfo sys = get_system_info();; sys_last = sys, sys = get_system_info()) {
-
-        /* Calculate cpu_percent for each process */
-        std::unordered_map<int, ProcessInfo *> lproc;
-        for (ProcessInfo& proc: sys_last.processes)
-            lproc[proc.pid] = &proc;
-        for (ProcessInfo& proc: sys.processes) {
-            if (lproc.count(proc.pid)) {
-                proc.cpu_percent = (double)((proc.utime + proc.stime) -
-                    (lproc[proc.pid]->utime + lproc[proc.pid]->stime))
-                    / (sys.cpus[1].total_time() - sys_last.cpus[1].total_time()) * 100;
-            }
-            else proc.cpu_percent = 0;
-        }
+        calc_process_cpu(sys, sys_last);
 
         /* Sort processes by sort key */
         std::sort(sys.processes.begin(), sys.processes.end());

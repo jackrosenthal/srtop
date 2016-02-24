@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -50,4 +51,21 @@ SystemInfo get_system_info() {
     }
     info.num_threads = info.num_user_threads + info.num_kernel_threads;
     return info;
+}
+
+/**
+ * Calculate cpu_percent for each process
+ */
+void calc_process_cpu(SystemInfo& sys, SystemInfo& sys_last) {
+    std::unordered_map<int, ProcessInfo *> lproc;
+    for (ProcessInfo& proc: sys_last.processes)
+        lproc[proc.pid] = &proc;
+    for (ProcessInfo& proc: sys.processes) {
+        if (lproc.count(proc.pid)) {
+            proc.cpu_percent = (double)((proc.utime + proc.stime) -
+                    (lproc[proc.pid]->utime + lproc[proc.pid]->stime))
+                / (sys.cpus[1].total_time() - sys_last.cpus[1].total_time()) * 100;
+        }
+        else proc.cpu_percent = 0;
+    }
 }
