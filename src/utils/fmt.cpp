@@ -32,7 +32,7 @@ char * fmt_loadavg_info(LoadAverageInfo& la) {
 
 char * fmt_cpuinfo_info(SystemInfo& sys, SystemInfo& sys_last, size_t cpu_no) {
     static char cpuinfo_buffer[80];
-    sprintf(cpuinfo_buffer, "TODO: cpuinfo_info");
+    sprintf(cpuinfo_buffer, "CPU%lu: ", cpu_no);
     return cpuinfo_buffer;
 }
 
@@ -63,7 +63,7 @@ char * fmt_mem_info() {
 
 char * fmt_tbl_header() {
     static char tbl_header_buffer[80];
-    sprintf(tbl_header_buffer, "%-5s %-7s %-1s %-4s %-8s %s",
+    sprintf(tbl_header_buffer, "%-5s %-7s %-1s %-5s %-8s %s",
             "PID", "Memory", "S", "CPU%", "Time", "Command"
         );
     return tbl_header_buffer;
@@ -71,7 +71,7 @@ char * fmt_tbl_header() {
 
 char * fmt_tbl_item(ProcessInfo& proc) {
     static char tbl_item_buffer[80];
-    sprintf(tbl_item_buffer, "%-5d %-7s %c %3.0f%% %-8s %s",
+    sprintf(tbl_item_buffer, "%-5d %-7s %c %-5.1f %-8s %s",
             proc.pid, fmt_bytes(proc.rss*sysconf(_SC_PAGESIZE)), proc.state,
             proc.cpu_percent, fmt_time((proc.utime+proc.stime)/sysconf(_SC_CLK_TCK)), proc.command_line.c_str());
     return tbl_item_buffer;

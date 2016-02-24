@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
             if (lproc.count(proc.pid)) {
                 proc.cpu_percent = (double)((proc.utime + proc.stime) -
                     (lproc[proc.pid]->utime + lproc[proc.pid]->stime))
-                    / sysconf(_SC_CLK_TCK) * 100;
+                    / (sys.cpus[1].total_time() - sys_last.cpus[1].total_time()) * 100;
             }
             else proc.cpu_percent = 0;
         }
