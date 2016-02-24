@@ -81,11 +81,10 @@ int main(int argc, char **argv) {
             attroff(COLOR_PAIR(2));
             if (++y >= row - 1) break;
         }
-        const char keys[4][5] = {"PID", "CPU", "MEM", "TIME"};
         move(row-1, 0);
         attron(COLOR_PAIR(1));
         mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s, max-proc: %d",
-                opts.delay_tenths, keys[(size_t)opts.sort_key], opts.max_proc);
+                opts.delay_tenths, sortby_keys[(size_t)opts.sort_key], opts.max_proc);
         fill_ln();
         attroff(COLOR_PAIR(1));
         refresh();

@@ -16,6 +16,11 @@ struct progopts {
 extern struct progopts opts;
 
 /**
+ * A lookup for the corresponding string to an enum
+ */
+static const char sortby_keys[4][5] = {"PID", "CPU", "MEM", "TIME"};
+
+/**
  * print help
  */
 void opts_help(char **argv, int exit_status);
