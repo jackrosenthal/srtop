@@ -15,16 +15,14 @@
 
 /**
  * Gets a character from the user, waiting for however many milliseconds that
- * were passed to timeout() below. If the letter entered is q, this method will
- * exit the program.
+ * were passed to timeout() below.
  */
-void exit_if_user_presses_q() {
-  char c = getch();
-
-  if (c == 'q') {
-    endwin();
-    exit(EXIT_SUCCESS);
-  }
+void input_handler() {
+    char c = getch();
+    if (c == 'q') {
+        endwin();
+        exit(EXIT_SUCCESS);
+    }
 }
 
 /**
@@ -103,7 +101,7 @@ int main(int argc, char **argv) {
         fill_ln();
         attroff(COLOR_PAIR(1));
         refresh();
-        exit_if_user_presses_q();
+        input_handler();
     }
     endwin();
 
