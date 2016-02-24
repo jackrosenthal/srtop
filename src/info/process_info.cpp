@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <vector>
+#include "../utils/opts.h"
 
 using namespace std;
 
@@ -126,4 +127,11 @@ while_cont:
     }
     closedir(dp);
     return infolist;
+}
+
+int operator <(ProcessInfo& a, ProcessInfo& b) {
+    if (opts.sort_key == PID) return a.pid < b.pid;
+    if (opts.sort_key == CPU) return a.cpu_percent > b.cpu_percent;
+    if (opts.sort_key == MEM) return a.rss > b.rss;
+    return a.utime + a.stime > b.utime + b.stime;
 }

@@ -27,7 +27,6 @@ void exit_if_user_presses_q() {
   }
 }
 
-
 /**
  * A simple ncurses "macro" to fill the rest of a line with spaces.
  */
@@ -41,13 +40,6 @@ void fill_ln() {
     getmaxyx(stdscr, row, col);
     getyx(stdscr, y, x);
     printw("%*s", col - x, "");
-}
-
-int operator <(ProcessInfo& a, ProcessInfo& b) {
-    if (opts.sort_key == PID) return a.pid < b.pid;
-    if (opts.sort_key == CPU) return a.cpu_percent > b.cpu_percent;
-    if (opts.sort_key == MEM) return a.rss > b.rss;
-    return a.utime + a.stime > b.utime + b.stime;
 }
 
 int main(int argc, char **argv) {

@@ -367,3 +367,9 @@ ProcessInfo get_process(int pid, const char* basedir);
  * /proc/<pid>/task basedir).
  */
 std::vector<ProcessInfo> get_all_processes(const char* basedir);
+
+/**
+ * Operator less-than for sorting a processes
+ * Requires program options to be defined
+ */
+int operator <(ProcessInfo& a, ProcessInfo& b);
