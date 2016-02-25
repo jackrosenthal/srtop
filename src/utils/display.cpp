@@ -1,6 +1,7 @@
 /**
  * Shadow Recruit top: Display drawing functions
  */
+#ifndef MAKE_TEST
 #include "display.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -144,3 +145,4 @@ int display_loop() {
     }
     return 0;
 }
+#endif
