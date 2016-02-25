@@ -372,4 +372,4 @@ std::vector<ProcessInfo> get_all_processes(const char* basedir);
  * Operator less-than for sorting a processes
  * Requires program options to be defined
  */
-int operator <(ProcessInfo& a, ProcessInfo& b);
+int operator <(const ProcessInfo& a, const ProcessInfo& b);

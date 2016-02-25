@@ -129,7 +129,7 @@ while_cont:
     return infolist;
 }
 
-int operator <(ProcessInfo& a, ProcessInfo& b) {
+int operator <(const ProcessInfo& a, const ProcessInfo& b) {
     if (opts.sort_key == PID) return a.pid < b.pid;
     if (opts.sort_key == CPU) return a.cpu_percent > b.cpu_percent;
     if (opts.sort_key == MEM) return a.rss > b.rss;
