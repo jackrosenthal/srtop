@@ -37,7 +37,7 @@ ALL_SRCS = $(shell find src -name '*.cpp')
 # directory specially, since we need to build it two different ways. Tests
 # define PROC_ROOT as ./proc, while the real binary sets PROC_ROOT to the actual
 # value (/proc).
-INFO_IMPL_SRCS = $(shell find src/info -name '*.cpp' -not -name '*_tests.cpp')
+INFO_IMPL_SRCS = $(shell find src/*/ -name '*.cpp' -not -name '*_tests.cpp')
 INFO_IMPL_OBJS = $(INFO_IMPL_SRCS:src/%.cpp=bin/%.o)
 INFO_IMPL_DEPS = $(INFO_IMPL_SRCS:src/%.cpp=bin/%.d)
 INFO_TEST_OBJS = $(INFO_IMPL_SRCS:src/%.cpp=bin/%_.o)
@@ -134,7 +134,7 @@ bin/gtest_main.a: bin/gtest-all.o bin/gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
 # Build the unit tests.
-bin/all_tests: $(INFO_TEST_OBJS) $(OTHER_OBJS) $(TEST_OBJS) bin/gtest_main.a
+bin/all_tests: $(INFO_TEST_OBJS) $(TEST_OBJS) bin/gtest_main.a
 	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -lncurses -pthread $^ -o $@
 
 # Set up a fake /proc filesystem for testing.
