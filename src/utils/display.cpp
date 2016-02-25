@@ -103,9 +103,13 @@ void display_draw_sbar() {
     getmaxyx(stdscr, row, col);
     move(row-1, 0);
     attron(COLOR_PAIR(1));
-    mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s, max-proc: %d",
-            opts.delay_tenths, sortby_keys[(size_t)opts.sort_key], opts.max_proc);
-    display_fill_ra("Right Align");
+    mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s",
+            opts.delay_tenths, sortby_keys[(size_t)opts.sort_key]);
+    char buf[128], name[32];
+    gethostname(name, sizeof(name));
+    time_t t = time(NULL);
+    snprintf(buf, 127, " %s@%s %s", getenv("USER"), name, asctime(localtime(&t)));
+    display_fill_ra(buf);
     attroff(COLOR_PAIR(1));
 }
 
