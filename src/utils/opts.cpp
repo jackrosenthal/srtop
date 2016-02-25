@@ -52,6 +52,10 @@ void opts_init(int argc, char **argv) {
                 break;
             case 'd':
                 sscanf(optarg, "%d", &opts.delay_tenths);
+                if (opts.delay_tenths < 1) {
+                    fprintf(stderr, "Delay too small!\n\n");
+                    opts_help(argv, 2);
+                }
                 break;
             case 's':
                 if (!strcmp(optarg, "PID")) {
