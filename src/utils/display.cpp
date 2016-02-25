@@ -131,6 +131,9 @@ void display_draw(SystemInfo& sys, SystemInfo& sys_last) {
 int display_loop() {
     SystemInfo sys_last = get_system_info(), sys = sys_last;
     sys_last.processes.clear();
+    for (CpuInfo& cpu: sys_last.cpus) {
+        cpu.idle_time -= opts.delay_tenths * 10 / sysconf(_SC_CLK_TCK);
+    }
     for (;;) {
         display_draw(sys, sys_last);
         sys_last = sys, sys = get_system_info();
