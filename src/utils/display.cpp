@@ -120,7 +120,7 @@ void display_draw_sbar() {
 void display_draw(SystemInfo& sys, SystemInfo& sys_last) {
     calc_process_cpu(sys, sys_last);
     std::sort(sys.processes.begin(), sys.processes.end());
-    wclear(stdscr);
+    werase(stdscr);
     display_draw_uptime(sys);
     display_draw_cpus(sys, sys_last);
     display_draw_cinfo(sys);
