@@ -7,10 +7,10 @@
 #include <unistd.h>
 #include <string.h>
 #include "fmt.h"
-#include "../info/system_info.h"
-#include "../info/load_average_info.h"
-#include "../info/process_info.h"
-#include "../info/memory_info.h"
+#include "system_info.h"
+#include "load_average_info.h"
+#include "process_info.h"
+#include "memory_info.h"
 
 char * fmt_uptime_info(double uptime) {
     static char uptime_buffer[80];

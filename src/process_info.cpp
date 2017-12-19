@@ -5,7 +5,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <vector>
-#include "../utils/opts.h"
+#include "opts.h"
 
 using namespace std;
 

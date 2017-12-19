@@ -1,7 +1,6 @@
 /**
  * Shadow Recruit top: Display drawing functions
  */
-#ifndef MAKE_TEST
 #include "display.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +10,7 @@
 #include <algorithm>
 #include "fmt.h"
 #include "opts.h"
-#include "../info/system_info.h"
+#include "system_info.h"
 
 /**
  * initialize the display
@@ -104,7 +103,7 @@ void display_draw_sbar() {
     getmaxyx(stdscr, row, col);
     move(row-1, 0);
     attron(COLOR_PAIR(1));
-    mvprintw(row-1, 0, "Shadow Recruit top - delay: %d tenths, sort-key: %s",
+    mvprintw(row-1, 0, "srtop - delay: %d tenths, sort-key: %s",
             opts.delay_tenths, sortby_keys[(size_t)opts.sort_key]);
     char buf[128], name[32];
     gethostname(name, sizeof(name));
@@ -145,4 +144,3 @@ int display_loop() {
     }
     return 0;
 }
-#endif

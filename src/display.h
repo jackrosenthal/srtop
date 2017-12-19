@@ -2,7 +2,7 @@
  * Shadow Recruit top: Display drawing functions
  */
 #pragma once
-#include "../info/system_info.h"
+#include "system_info.h"
 
 /**
  * initialize the display

@@ -1,6 +1,6 @@
 #pragma once
-#include "../info/system_info.h"
-#include "../info/load_average_info.h"
+#include "system_info.h"
+#include "load_average_info.h"
 
 char * fmt_uptime_info(double uptime);
 char * fmt_loadavg_info(LoadAverageInfo& la);
