@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 vector<CpuInfo> get_cpu_info() {
     FILE *fp = fopen(PROC_ROOT "/stat", "r");
     if (!fp) {
@@ -26,10 +25,4 @@ vector<CpuInfo> get_cpu_info() {
     }
     fclose(fp);
     return info;
-}
-
-
-CpuInfo operator -(const CpuInfo& lhs, const CpuInfo& rhs) {
-    // TODO: implement me
-    return CpuInfo();
 }

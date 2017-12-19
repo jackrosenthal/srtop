@@ -97,16 +97,9 @@ struct CpuInfo {
     }
 };
 
-
 /**
  * Returns a vector with one Cpu entry for each processor present in the system,
  * in the order the system sees them, with an additional entry at the beginning
  * of the vector representing the overal system CPU usage.
  */
 std::vector<CpuInfo> get_cpu_info();
-
-
-/**
- * Overloaded '-' operator for subtracting one CpuInfo from another.
- */
-CpuInfo operator -(const CpuInfo& lhs, const CpuInfo& rhs);
